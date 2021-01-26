@@ -1,0 +1,21 @@
+<p>—title— image denoising with python —abstract— remove text background with cv2 and numpy</p>
+<p>I’m a big fan of the <a id = "NCE" href = https://www.camscanner.com/>CamScanner</a> app and have been using this program on my phone ever since a friend introduced it to me many years ago. You take a snapshot of a piece of paper and <em>CamScanner</em> will produce a pdf with crisp, very readable, text and the background removed. I wanted to add this functionality to my <a id = "NCE" href = https://github.com/kacpertopol/cam_board> cam_board</a> script (the name is homage to <em>CamScanner</em>) and after a lot of experimentation I believe I finally have a simple solution. Below is a description of the resulting procedure, it is an abridged version of the algorithm inside <code>cam_board</code>. The line numbers correspond to the <code>denoise.py</code> file available <a id = "NCE" href = https://github.com/kacpertopol/denoise>here</a>.</p>
+<p>First some imports [denoise.py line: 29]</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cv2</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy</span></code></pre></div>
+<p>The <code>argparse</code> library will be used to parse the command line arguments. This might be overkill since there will be only one argument - the name of the image (without the extension) that will undergo the denoising procedure. The <code>cv2</code> library in conjunction with the <code>numpy</code> library will be used to perform image manipulations. [denoise.py line: 29]</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> argparse</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cv2</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy</span></code></pre></div>
+<p>Next the single command line argument is parsed [denoise.py line: 43]</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>parser <span class="op">=</span> argparse.ArgumentParser(description <span class="op">=</span> <span class="st">&quot;Denoise image.&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>parser.add_argument(<span class="st">&quot;input&quot;</span> , <span class="bu">help</span> <span class="op">=</span> <span class="st">&quot;Input image name (without extension)&quot;</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>args <span class="op">=</span> parser.parse_args() </span></code></pre></div>
+<p>and it will be available in <code>args.input</code>. Note that the image name is expected not to contain the extension, e.g.instead of <code>warped1.png</code> the command line expects <code>warped1</code>.</p>
+<p>The image is read using the <code>cv2.imread</code> function [denoise.py line: 62]</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>warped <span class="op">=</span> cv2.imread(args.<span class="bu">input</span> <span class="op">+</span> <span class="st">&quot;.png&quot;</span>)</span></code></pre></div>
+<p>The <a id = "NCE" href = https://github.com/kacpertopol/denoise>denoise repository</a> contains four sample images: <code>warped1...4.png</code> that contain that were “warped” inside <code>cam_board</code> (web cam frames are morphed so that four special markers showing up on a printout are stretched to the four corners of the image). Here we will use <code>warped1.png</code> and <code>warped4.png</code></p>
+<center>
+<img src="warped1.png" />
+</center>
