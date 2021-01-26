@@ -1,5 +1,7 @@
 # ignore denoised images
 *_*.png
+# ignore new markdown file
+denoise.md
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
