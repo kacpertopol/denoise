@@ -26,51 +26,50 @@ import cv2
 import numpy
 #@end imports
 
-if(__name__ == "__main__"):
 
-    parser = argparse.ArgumentParser(description = "Denoise image.")
-    parser.add_argument("input" , help = "Input image name (without extension)")
-    args = parser.parse_args() 
+parser = argparse.ArgumentParser(description = "Denoise image.")
+parser.add_argument("input" , help = "Input image name (without extension)")
+args = parser.parse_args() 
 
-    warped = cv2.imread(args.input + ".png")
+warped = cv2.imread(args.input + ".png")
 
-    gray = cv2.cvtColor(warped , cv2.COLOR_BGR2GRAY) 
-    gray = 255 - gray
-    
-    cv2.imwrite(args.input + "_gray.png" , gray)
-    
-    gray = gray.astype("float32")
+gray = cv2.cvtColor(warped , cv2.COLOR_BGR2GRAY) 
+gray = 255 - gray
 
-    blur_kernel = numpy.ones((300 , 300) , dtype = numpy.float32) 
-    blur_kernel = blur_kernel / numpy.sum(blur_kernel.flatten())
+cv2.imwrite(args.input + "_gray.png" , gray)
 
-    blured_gray = cv2.filter2D(gray , -1 , blur_kernel)
-    
-    cv2.imwrite(args.input + "_blured_1.png" , blured_gray)
+gray = gray.astype("float32")
 
-    gray[0:3 , :] = 0.0
-    gray[gray.shape[0] - 3 : gray.shape[0] , :] = 0.0
-    gray[: , 0:3] = 0.0
-    gray[: , gray.shape[1] - 3 : gray.shape[1]] = 0.0
+blur_kernel = numpy.ones((300 , 300) , dtype = numpy.float32) 
+blur_kernel = blur_kernel / numpy.sum(blur_kernel.flatten())
 
-    blured_gray = cv2.filter2D(gray , -1 , blur_kernel)
-    
-    cv2.imwrite(args.input + "_blured_2.png" , blured_gray)
+blured_gray = cv2.filter2D(gray , -1 , blur_kernel)
 
-    stdv = numpy.sqrt(numpy.mean(((gray - blured_gray) * (gray - blured_gray)).flatten()))
+cv2.imwrite(args.input + "_blured_1.png" , blured_gray)
 
-    gray_2 = (gray - blured_gray)
-    gray_2 = 255.0 * (gray_2 - numpy.amin(gray_2)) / (numpy.amax(gray_2) - numpy.amin(gray_2))
-    cv2.imwrite(args.input + "_gray_2.png" , gray_2)
-    
-    hls = cv2.cvtColor(warped , cv2.COLOR_BGR2HLS)
-    
-    h_res = hls[: , : , 0]
-    l_res = numpy.full(gray.shape , 255.0 , dtype = numpy.float32)
-    l_res = numpy.where((gray - blured_gray) > stdv , hls[: , : , 1] , l_res)
-    s_res = hls[: , : , 2]
+gray[0:3 , :] = 0.0
+gray[gray.shape[0] - 3 : gray.shape[0] , :] = 0.0
+gray[: , 0:3] = 0.0
+gray[: , gray.shape[1] - 3 : gray.shape[1]] = 0.0
 
-    warped = cv2.cvtColor(cv2.merge((h_res.astype("uint8") , l_res.astype("uint8") , s_res.astype("uint8"))) , cv2.COLOR_HLS2BGR)
-    
-    cv2.imwrite(args.input + "_warped.png" , warped)
+blured_gray = cv2.filter2D(gray , -1 , blur_kernel)
+
+cv2.imwrite(args.input + "_blured_2.png" , blured_gray)
+
+stdv = numpy.sqrt(numpy.mean(((gray - blured_gray) * (gray - blured_gray)).flatten()))
+
+gray_2 = (gray - blured_gray)
+gray_2 = 255.0 * (gray_2 - numpy.amin(gray_2)) / (numpy.amax(gray_2) - numpy.amin(gray_2))
+cv2.imwrite(args.input + "_gray_2.png" , gray_2)
+
+hls = cv2.cvtColor(warped , cv2.COLOR_BGR2HLS)
+
+h_res = hls[: , : , 0]
+l_res = numpy.full(gray.shape , 255.0 , dtype = numpy.float32)
+l_res = numpy.where((gray - blured_gray) > stdv , hls[: , : , 1] , l_res)
+s_res = hls[: , : , 2]
+
+warped = cv2.cvtColor(cv2.merge((h_res.astype("uint8") , l_res.astype("uint8") , s_res.astype("uint8"))) , cv2.COLOR_HLS2BGR)
+
+cv2.imwrite(args.input + "_warped.png" , warped)
 
