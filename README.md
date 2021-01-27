@@ -1,10 +1,6 @@
 # denoise
 simple image denoising script
 
-# dependencies
-
-Requires `cv2` and `numpy`.
-
 # relevant files
 
 There are a lot of files here. The important ones are:
@@ -17,6 +13,9 @@ There are a lot of files here. The important ones are:
 
 The other image files are a result of running the `denoise.py` script.
 
+# dependencies
+
+Requires `cv2` and `numpy`.
 
 # running the script
 
